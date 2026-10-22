@@ -346,4 +346,16 @@ extension WatchCompanionStore: WCSessionDelegate {
             self?.receiveSnapshotData(data)
         }
     }
+}#if os(iOS)
+extension WatchCompanionStore {
+    nonisolated func sessionDidBecomeInactive(
+        _ session: WCSession
+    ) {}
+
+    nonisolated func sessionDidDeactivate(
+        _ session: WCSession
+    ) {
+        WCSession.default.activate()
+    }
 }
+#endif
