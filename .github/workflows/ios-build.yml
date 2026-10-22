@@ -1,0 +1,41 @@
+
+name: Boji iPhone Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Show project schemes
+        run: |
+          xcodebuild -list \
+            -project ios/Boji.xcodeproj
+
+      - name: Build iPhone app
+        run: |
+          xcodebuild \
+            -project ios/Boji.xcodeproj \
+            -scheme Boji \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: Boji-Unsigned-iOS
+          path: build/Build/Products/Release-iphoneos/
+          if-no-files-found: error
